@@ -13,4 +13,4 @@ const client = new Client({
 
 await load('src/{commands,signals}/**/*.js');
 
-client.login();
+client.login('MTMyNTIwODM4NDg2OTI0MDk0Mg.G9KUCe.I59M5YgT0fuWbsHPYYq0qF56pjp0vw3uq3_20I');
