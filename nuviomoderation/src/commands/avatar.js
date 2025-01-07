@@ -18,7 +18,7 @@ execute(slash, (interaction) => {
 	const avatarURL = user.displayAvatarURL({ size: 1024, forceStatic: false });
 
 	interaction.reply({
-		content: `Avatar of user **${interaction.target.username}**`,
+		content: `Avatar of user **${interaction.user.username}**`,
 		files: [avatarURL],
 	});
 });
