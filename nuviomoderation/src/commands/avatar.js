@@ -14,20 +14,21 @@ const slash = new Slash({
 	],
 });
 
-slash.execute(async (interaction) => {
-	// Fetch the target user from the command options or default to the interaction user
-	const user = interaction.options.getUser('user') || interaction.user;
+   slash.execute(async (interaction) => {
+       try {
+           const user = interaction.options.getUser('user') || interaction.user;
+           const avatarUrl = user.displayAvatarURL({ dynamic: true, size: 512 });
 
-	// Correctly output the user's tag
-	const userName = user.tag; // user.tag gives "username#1234"
-
-	// Generate the avatar URL
-	const avatarUrl = user.displayAvatarURL({ dynamic: true, size: 512 }); // Dynamic for GIF avatars, size for better quality
-
-	// Reply with the avatar and the CORRECT target user's name
-	return interaction.reply({
-		content: `🖼️ Here's the avatar of **${userName}**:\n${avatarUrl}`,
-	});
-});
+           await interaction.reply({
+               content: `🖼️ Here's the avatar of **${user.tag}**: ${avatarUrl}`,
+           });
+       } catch (error) {
+           console.error('Error fetching avatar:', error);
+           await interaction.reply({
+               content: '❌ An error occurred while fetching the avatar.',
+               ephemeral: true,
+           });
+       }
+   });
 
 export { slash };
