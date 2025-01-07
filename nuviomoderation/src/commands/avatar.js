@@ -1,41 +1,26 @@
-import { Slash } from 'sunar';
 import { ApplicationCommandOptionType } from 'discord.js';
+import { Slash, execute } from 'sunar';
 
 const slash = new Slash({
 	name: 'avatar',
-	description: 'Fetch and display the profile picture of a user or yourself.',
+	description: 'Show user avatar',
 	options: [
 		{
-			name: 'user',
+			name: 'target',
+			description: 'Target user',
 			type: ApplicationCommandOptionType.User,
-			description: 'The user whose avatar you want to fetch.',
-			required: false,
 		},
 	],
 });
 
-slash.execute(async (interaction) => {
-	try {
-		// Defer reply to ensure no timeout
-		await interaction.deferReply();
+execute(slash, (interaction) => {
+	const user = interaction.options.getUser('target') ?? interaction.user;
+	const avatarURL = user.displayAvatarURL({ size: 1024, forceStatic: false });
 
-		// Get the user
-		const user = interaction.options.getUser('user') || interaction.user;
-
-		// Generate avatar URL
-		const avatarUrl = user.displayAvatarURL({ dynamic: true, size: 512 });
-
-		// Reply with the user's avatar
-		await interaction.followUp({
-			content: `🖼️ Here's the avatar of **${user.tag}**:\n${avatarUrl}`,
-		});
-	} catch (error) {
-		console.error('Error handling avatar command:', error);
-		await interaction.followUp({
-			content: '❌ An error occurred while fetching the avatar.',
-			ephemeral: true,
-		});
-	}
+	interaction.reply({
+		content: `Avatar of user **${interaction.user.username}**`,
+		files: [avatarURL],
+	});
 });
 
 export { slash };
