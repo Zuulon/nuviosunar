@@ -1,25 +1,32 @@
+import { Slash } from 'sunar';
 import { ApplicationCommandOptionType } from 'discord.js';
-import { Slash, execute } from 'sunar';
 
 const slash = new Slash({
 	name: 'avatar',
-	description: 'Show user avatar',
+	description: 'Fetch and display the profile picture of a user or yourself.',
 	options: [
 		{
-			name: 'target',
-			description: 'Target user',
+			name: 'user',
 			type: ApplicationCommandOptionType.User,
+			description: 'The user whose avatar you want to fetch.',
+			required: false, // Optional: Defaults to the interaction user if not provided
 		},
 	],
 });
 
-execute(slash, (interaction) => {
-	const user = interaction.options.getUser('target') ?? interaction.user;
-	const avatarURL = user.displayAvatarURL({ size: 1024, forceStatic: false });
+slash.execute(async (interaction) => {
+	// Fetch the target user from the command options or default to the interaction user
+	const user = interaction.options.getUser('user') || interaction.user;
 
-	interaction.reply({
-		content: `Avatar of user **${interaction.user.username}**`,
-		files: [avatarURL],
+	// Correctly output the user's tag
+	const userName = user.tag; // user.tag gives "username#1234"
+
+	// Generate the avatar URL
+	const avatarUrl = user.displayAvatarURL({ dynamic: true, size: 512 }); // Dynamic for GIF avatars, size for better quality
+
+	// Reply with the avatar and the CORRECT target user's name
+	return interaction.reply({
+		content: `🖼️ Here's the avatar of **${userName}**:\n${avatarUrl}`,
 	});
 });
 
